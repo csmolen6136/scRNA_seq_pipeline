@@ -10,14 +10,15 @@ def marker_genes():
 	parser = argparse.ArgumentParser(description="scRNA-seq preprocessing")
 	parser.add_argument("-o", "--output_dir", type=str, help="Output directory")
 	parser.add_argument("-r", "--resolution", type=str, default="", help="Alternative resolution to use for defined clusters")
-	parser.add_argument("-b", "--batch", type=str, help="Variable to use as batch")
+	parser.add_argument("-v", "--var_cols", type=str, nargs='+',
+					 		default=['Protocol', 'Extraction_batch', 'Sequencing_batch', 'Sample', 'Sex', 'Age'], help="Features to plot against UMAP")
 	parser.add_argument("-g", "--genes", type=str, nargs='+',
 					 		default=['CDR2', 'POLR3E', 'EEF2K', 'SDR42E2', 'VWA3A', 'MOSMO', 'PDZD9', 'UQCRC2'], help="Specific genes to track across clusters")
 	args = parser.parse_args()
 
 	OUTPUT_DIR=args.output_dir
 	RES=args.resolution
-	BATCH=args.batch
+	rel_cols=args.var_cols
 
 	PLOT_GENES=args.genes
 
@@ -47,7 +48,7 @@ def marker_genes():
 
 	# Plot expression of specific genes
 	sc.pl.umap(adata,
-				color=PLOT_GENES+['leiden', BATCH],
+				color=PLOT_GENES+['leiden']+rel_cols,
 				legend_loc="on data",
     			frameon=False,
     			ncols=4, show=False)
